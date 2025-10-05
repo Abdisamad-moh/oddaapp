@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "16689497679",
+    "project_id": "oddha-6f3c2",
+    "storage_bucket": "oddha-6f3c2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:16689497679:android:1b4de9da41cdc8f7fa0c3a",
+        "android_client_info": {
+          "package_name": "com.app.odda"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "16689497679-g5emgg3crhdg5c7kaf2upt8duv3a4479.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.odda",
+            "certificate_hash": "3bec4a614e263e307745c8acc59dfdd3cb1267b5"
+          }
+        },
+        {
+          "client_id": "16689497679-k34775olc06usgft75ev2stu3c750jpj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6m3C6WJCdZ6zQEkpZWapK6_yFS8ucBO8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "16689497679-k34775olc06usgft75ev2stu3c750jpj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "16689497679-3dmp0s6g7r19vpfcoqbcfpissmes09rv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.odda",
+                "app_store_id": "6444509766"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
