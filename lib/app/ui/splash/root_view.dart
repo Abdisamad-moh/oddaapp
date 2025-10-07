@@ -64,7 +64,7 @@ class _RootViewState extends State<RootView> {
 
             Get.offAllNamed(Routes.Middle);
             // ForceUpdateAppDialog.show(context);
-            print("asdfasdfasdf");
+            print("testing if worked");
             if(!isNotificationOpened){
               // Get.offAllNamed(Routes.Home);
               print(getValue(SharedPref.currencyCode));

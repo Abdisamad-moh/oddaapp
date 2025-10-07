@@ -150,6 +150,7 @@ class HomeController extends GetxController{
       // if(bannerData.hasNewNotification){
       //   isNewNotification.value = true;
       // }
+      print('Banner Data ayaa xigta');
       print(bannerData.toJson());
       bannerList.assignAll(bannerData.data);
       isBannerLoading.value = false;

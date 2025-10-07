@@ -209,7 +209,7 @@ class ApiProvider extends GetxService {
     log('item type in home getProduct:$params');
 
     var response =
-        await _dio.get(getBaseURL("products"), queryParameters: params);
+        await _dio.get(getBaseURL("products"),options: getOptions(), queryParameters: params);
     // print(response.data);
     if (response.statusCode == 200) {
       return ProductListData.fromJson(response.data);
