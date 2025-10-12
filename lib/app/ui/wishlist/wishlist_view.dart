@@ -21,7 +21,9 @@ class WishlistView extends GetView<WishlistController>{
 
     return Scaffold(
       backgroundColor: colorConstants.white,
-      bottomNavigationBar: const AppBottomNavigation(),
+            bottomNavigationBar: const SafeArea(
+        child: AppBottomNavigation(),
+      ),
       body: RefreshIndicator(
           onRefresh: ()async{
            controller.getWishListItems();

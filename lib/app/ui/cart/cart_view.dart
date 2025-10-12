@@ -18,23 +18,27 @@ class CartView extends GetView<CartController>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 5,),
-          Obx(() => controller.cartList.isEmpty
-              ? const SizedBox.shrink() : controller.isFetching.value ? getLoader() :  GestureDetector(
-            onTap: (){
-              if(!controller.isFetching.value) {
-                // controller.placeOrder(context);
-                showConfirmationPopup(context);
-              }
-            },
-            child: getSolidButton(90.w, 'Place order'),
-          )),
-          const SizedBox(height: 10,),
-          const AppBottomNavigation()
-        ],
+      bottomNavigationBar: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 5),
+            Obx(() => controller.cartList.isEmpty
+                ? const SizedBox.shrink()
+                : controller.isFetching.value
+                    ? getLoader()
+                    : GestureDetector(
+                        onTap: () {
+                          if (!controller.isFetching.value) {
+                            showConfirmationPopup(context);
+                          }
+                        },
+                        child: getSolidButton(90.w, 'Place order'),
+                      )),
+            const SizedBox(height: 10),
+            const AppBottomNavigation(),
+          ],
+        ),
       ),
       backgroundColor: colorConstants.white,
       body: SafeArea(

@@ -35,43 +35,60 @@ class JobApplicants extends GetView<JobApplicantsController> {
 
             //Sales Representative 2. Tele Marketer
             Container(
-              alignment: Alignment.centerLeft,
-              height: 4.h,
-              child: ListView.builder(
-                  itemCount: controller.jobTypes.length,
-                  scrollDirection: Axis.horizontal,
-                  shrinkWrap: true,
+  alignment: Alignment.centerLeft,
+  height: 4.h,
+  child: Obx(() {
+    // Show shimmer or empty state while categories are loading
+    if (controller.isLoading.value && controller.jobTypes.isEmpty) {
+      return Center(
+        child: addText('Loading categories...',
+            getNormalTextFontSIze(), colorConstants.black, FontWeight.w500),
+      );
+    }
 
-                  itemBuilder: (context, int index) {
-                    return Obx(() {
-                      return GestureDetector(
-                        onTap: () {
-                          controller.selectedJobType.value = index;
-                          controller.getJobApplicants(); // api call
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              boxShadow: [getDeepBoxShadow()],
-                              color: controller.selectedJobType == index
-                                  ? colorConstants.buttonColor
-                                  : colorConstants.white,
-                              borderRadius: getCurvedBorderRadius()),
-                          child: Center(
-                            child: addAlignedText(
-                                '${controller.jobTypes[index]}',
-                                getNormalTextFontSIze(),
-                                controller.selectedJobType == index
-                                    ? colorConstants.white
-                                    : colorConstants.black,
-                                FontWeight.w600)
-                                .marginSymmetric(
-                                horizontal: 16.sp, vertical: 10.sp),
-                          ),
-                        ).marginOnly(left: index==0?0:14.sp),
-                      );
-                    });
-                  }),
-            ).marginOnly(bottom: 16.sp, left: 16.sp, right: 16.sp),
+    if (controller.jobTypes.isEmpty) {
+      return Center(
+        child: addText('No job categories found',
+            getNormalTextFontSIze(), colorConstants.black, FontWeight.w500),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: controller.jobTypes.length,
+      scrollDirection: Axis.horizontal,
+      shrinkWrap: true,
+      itemBuilder: (context, int index) {
+        final jobType = controller.jobTypes[index];
+
+        return GestureDetector(
+          onTap: () {
+            controller.selectedJobTypeIndex.value = index;
+            controller.selectedJobTypeId.value = jobType.id ?? 0;
+            controller.getJobApplicants(); // Fetch applicants for selected job type
+          },
+          child: Obx(() => Container(
+                decoration: BoxDecoration(
+                    boxShadow: [getDeepBoxShadow()],
+                    color: controller.selectedJobTypeIndex.value == index
+                        ? colorConstants.buttonColor
+                        : colorConstants.white,
+                    borderRadius: getCurvedBorderRadius()),
+                child: Center(
+                  child: addAlignedText(
+                          jobType.name ?? 'Unnamed',
+                          getNormalTextFontSIze(),
+                          controller.selectedJobTypeIndex.value == index
+                              ? colorConstants.white
+                              : colorConstants.black,
+                          FontWeight.w600)
+                      .marginSymmetric(horizontal: 16.sp, vertical: 10.sp),
+                ),
+              ).marginOnly(left: index == 0 ? 0 : 14.sp)),
+        );
+      },
+    );
+  }),
+).marginOnly(bottom: 16.sp, left: 16.sp, right: 16.sp),
 
             Expanded(
               child: Obx(() {

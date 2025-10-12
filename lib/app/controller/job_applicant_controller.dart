@@ -8,58 +8,103 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:odda/app/model/job_applicants_model.dart';
+import 'package:odda/app/model/job_type_model.dart';
 import 'package:odda/app/repository/job_applicants_repository.dart';
+import 'package:odda/app/repository/job_type_repository.dart';
 import 'package:odda/common/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class JobApplicantsController extends GetxController {
-  JobApplicantsController() { // initialize JobApplicantsRepository
+  JobApplicantsController() {
     jobApplicantsRepository = JobApplicantsRepository();
+    jobTypeRepository = JobTypeRepository();
   }
 
+  /// -----------------------
+  /// VARIABLES
+  /// -----------------------
   final isLoading = false.obs;
   final isFetching = false.obs;
+
   late JobApplicantsRepository jobApplicantsRepository;
+  late JobTypeRepository jobTypeRepository;
+
   final jobApplicantsList = <JobApplicantsDatum>[].obs;
+  final jobTypes = <JobTypeDatum>[].obs;
 
+  RxInt selectedJobTypeIndex = 0
+      .obs; // index for UI highlight (the position in the list)
+  RxInt selectedJobTypeId = 0.obs; // the actual job type ID to send to API
 
-  RxInt selectedJobType = 0.obs;
-  RxList jobTypes = ['All', 'Sales Representative', 'Tele Marketer',].obs;
-
-
+  /// -----------------------
+  /// ON INIT
+  /// -----------------------
   @override
   void onInit() {
-    // TODO: implement onInit
     super.onInit();
-    getJobApplicants();
+    fetchJobTypes(); // fetch job categories first
   }
 
+  /// -----------------------
+  /// FETCH JOB TYPES FROM BACKEND
+  /// -----------------------
+  Future<void> fetchJobTypes() async {
+    try {
+      isLoading.value = true;
+
+      final result = await jobTypeRepository.getJobTypes();
+      if (result.status == true && result.data != null) {
+        jobTypes.value = result.data!;
+
+        // Optionally add an "All" category at the beginning
+        jobTypes.insert(
+          0,
+          JobTypeDatum(id: 0, name: 'All'),
+        );
+
+        // Automatically select "All" on first load
+        selectedJobTypeId.value = 0;
+
+        // Once loaded, fetch applicants for 'All' or first type
+        getJobApplicants();
+      } else {
+        jobTypes.clear();
+      }
+    } catch (e) {
+      print('Error fetching job types: $e');
+      showSnackbar(Get.context!, 'Failed to fetch job categories');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// -----------------------
+  /// FETCH JOB APPLICANTS BASED ON SELECTED JOB TYPE
+  /// -----------------------
   void getJobApplicants() async {
     try {
       isLoading.value = true;
-      ModelJobApplicants modelJobApplicants = await jobApplicantsRepository.getJobApplicants(selectedJobType==1 ? 101 :selectedJobType==2 ? 102 : 0);
-      jobApplicantsList.assignAll(modelJobApplicants.data!);
-      if(jobApplicantsList.isNotEmpty){
+      final jobTypeId = selectedJobTypeId.value; // send correct ID to API
 
-      }
+      ModelJobApplicants modelJobApplicants =
+          await jobApplicantsRepository.getJobApplicants(jobTypeId);
+
+      jobApplicantsList.assignAll(modelJobApplicants.data ?? []);
       isLoading.value = false;
     } catch (e) {
       isLoading.value = false;
       if (e is DioException) {
-        if (kDebugMode) {
-          print('Upper ===  ${ e.response!.data}');
-        }
-
-      }
-      else {
-        Get.snackbar('', e.toString());
-        if (kDebugMode) {
-          print('Lower ===  $e');
-        }
+        if (kDebugMode) print('Error response: ${e.response?.data}');
+      } else {
+        if (kDebugMode) print('Error: $e');
+        showSnackbar(Get.context!, e.toString());
       }
     }
   }
 
+  /// -----------------------
+  /// LAUNCH CV URL
+  /// -----------------------
   Future<void> launchUrl(String url) async {
     if (!await canLaunch(url)) {
       throw Exception('Could not launch $url');
@@ -68,39 +113,22 @@ class JobApplicantsController extends GetxController {
     log("launching url::=>$url<=::");
   }
 
-  // launchURL(dynamicUrl) async {
-  //
-  //   try {
-  //     if (await canLaunchUrl(Uri.parse(dynamicUrl))) {
-  //       await launchUrl(Uri.parse(dynamicUrl), mode: LaunchMode.platformDefault);
-  //     } else {
-  //       throw 'Could not launch $dynamicUrl';
-  //     }
-  //   } catch (e) {
-  //     print('Error launching URL: $e');
-  //   }
-  //
-  //
-  // }
-
-  // upper code for getting job Applicants list
-
-
-
-  // below code form to apply for job
+  /// -----------------------
+  /// FORM INPUT CONTROLLERS
+  /// -----------------------
   TextEditingController nameController = TextEditingController();
   TextEditingController positionController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController yrExpController = TextEditingController();
   TextEditingController uploadController = TextEditingController();
-  // final isLoading = false.obs;
 
   final countryCodeFromApi = '+254'.obs;
-  int? countryCode ;
+  int? countryCode;
   String? countryCodeFromPicker;
-  final TextEditingController countryCodePickerController = TextEditingController();
-  void onCountryCodeChanged(CountryCode? code) {
+  final TextEditingController countryCodePickerController =
+      TextEditingController();
 
+  void onCountryCodeChanged(CountryCode? code) {
     countryCode = int.tryParse(code?.dialCode.toString() ?? '');
     countryCodePickerController.text = code.toString();
     countryCodeFromPicker = code?.dialCode;
@@ -109,30 +137,26 @@ class JobApplicantsController extends GetxController {
     Get.log("countryCodeFromPicker:$countryCodeFromPicker");
   }
 
-//upload Cv
-//   List<String> filePath =[];
+  /// -----------------------
+  /// UPLOAD CV
+  /// -----------------------
   RxString cvPath = ''.obs;
   PlatformFile? pickedFile;
+
   Future<void> uploadCv(BuildContext context) async {
     cvPath = ''.obs;
     uploadController.clear();
     print('uploadCv ontap');
     FilePickerResult? result;
-    result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf']
-    );
-    // filePath.clear();
-    if (result != null) {
+    result = await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
 
-      // log("images multiple"+result.files.length.toString());
+    if (result != null) {
       for (var element in result.files) {
-        // filePath.add(element.path.toString());
-        if(element.path!.contains('pdf')) {
+        if (element.path!.contains('pdf')) {
           cvPath.value = '${element.path}';
           uploadController.text = cvPath.split('/').last;
-        }
-        else {
+        } else {
           showSnackbar(context, 'Please select only pdf.');
         }
       }
@@ -142,8 +166,7 @@ class JobApplicantsController extends GetxController {
   }
 }
 
-class PdfPathModel{
+class PdfPathModel {
   String? path;
   PdfPathModel({this.path});
-
 }

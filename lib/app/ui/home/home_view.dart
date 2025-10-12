@@ -36,9 +36,11 @@ class HomeView extends GetView<HomeController> {
       backgroundColor: colorConstants.primaryColor,
       drawer: const AppDrawer(),
       // bottomNavigationBar: const AppBottomNavigation(),
-      bottomNavigationBar: Container(
-        color: colorConstants.white,
-        child: const AppBottomNavigation(),
+      bottomNavigationBar: SafeArea(
+          child: Container(
+          color: colorConstants.white,
+          child: const AppBottomNavigation(),
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -179,7 +181,7 @@ class HomeView extends GetView<HomeController> {
                       SvgPicture.asset('assets/images/search.svg'),
                       const SizedBox(width: 10),
                       addText(
-                        'Search Products / Distributors / Category',
+                        'Search Products / Distributors / Exporters',
                         getNormalTextFontSIze(),
                         colorConstants.greyTextColor,
                         FontWeight.normal,

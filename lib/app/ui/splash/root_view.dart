@@ -158,7 +158,7 @@ class _RootViewState extends State<RootView> {
                 ),
                 Expanded(child: Container()),
                 addAlignedText(
-                    'Order medication online\nFind distributors',
+                    'Order medication online\nFind distributors & exporters',
                     getLargeTextFontSIze(),
                     colorConstants.white,
                     FontWeight.normal),

@@ -18,6 +18,7 @@ import 'package:odda/app/model/profile_data.dart';
 import 'package:odda/app/model/update_app_data.dart';
 import 'package:odda/app/model/wishlist_data.dart';
 import 'package:odda/common/utils.dart';
+import 'package:odda/app/model/job_type_model.dart'; // top of file
 
 import '../../common/preferences.dart';
 import '../model/add_address_data.dart';
@@ -741,6 +742,16 @@ class ApiProvider extends GetxService {
         '/sdcard/download/abc.xlsX');
     if (response.statusCode == 200) {
       return "Report Downloaded";
+    } else {
+      throw Exception(response.data);
+    }
+  }
+
+  Future<ModelJobTypes> getJobTypes() async {
+    var response = await _dio.get(getBaseURL("job_application_categories"),
+        options: getOptions());
+    if (response.statusCode == 200) {
+      return ModelJobTypes.fromJson(response.data);
     } else {
       throw Exception(response.data);
     }
