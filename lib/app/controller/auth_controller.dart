@@ -24,6 +24,7 @@ class AuthController extends GetxController {
   final hidePassword = true.obs;
   final hideConfirmPassword = true.obs;
   final isLoading = false.obs;
+  RxString selectedType = 'pharmacy'.obs;
 
   final isChecked = false.obs;
   bool isLastRouteProduct = false;
@@ -121,7 +122,7 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
       LoginData loginData = await _authRepository.sendOTP(
-          'login',
+          selectedType.value, 
           businessNameController.text.toString(),
           contactNoController.text.trim(),
         licenseNumberController.text.trim(),
@@ -174,7 +175,7 @@ class AuthController extends GetxController {
         });
 
       } else {
-        otpData = await _authRepository.verifyOtp(enteredOtp.value, businessNameController.text.toString(), contactNoController.text.trim(),licenseNumberController.text.trim(),AuthService().getCountryCode("countryCode") ??"+254");
+        otpData = await _authRepository.verifyOtp(enteredOtp.value, businessNameController.text.toString(), contactNoController.text.trim(),licenseNumberController.text.trim(),AuthService().getCountryCode("countryCode") ??"+254", selectedType.value);
       }
 
       // showSnackbar(context, otpData.token);

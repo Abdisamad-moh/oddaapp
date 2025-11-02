@@ -48,8 +48,59 @@ class SignUpView extends GetView<AuthController>{
                 addText('Register ${AuthService().getCountryCode("countryCode")}', getLargeTextFontSIze(), colorConstants.black, FontWeight.bold),
                 SizedBox(height: 2.h,),
                 addText('Please enter the details below to continue.', getNormalTextFontSIze(), colorConstants.greyTextColor, FontWeight.normal),
-                SizedBox(height: 5.h,),
+                SizedBox(height: 4.h,),
+                Obx(() => Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    GestureDetector(
+      onTap: () => controller.selectedType.value = 'pharmacy',
+      child: Container(
+        decoration: BoxDecoration(
+          color: controller.selectedType.value == 'pharmacy'
+              ? colorConstants.buttonColor
+              : colorConstants.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [getDeepBoxShadow()],
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 10.sp),
+        child: addText(
+          'Pharmacy',
+          getNormalTextFontSIze(),
+          controller.selectedType.value == 'pharmacy'
+              ? colorConstants.white
+              : colorConstants.black,
+          FontWeight.w600,
+        ),
+      ),
+    ),
+    SizedBox(width: 10.sp),
+    GestureDetector(
+      onTap: () => controller.selectedType.value = 'importer',
+      child: Container(
+        decoration: BoxDecoration(
+          color: controller.selectedType.value == 'importer'
+              ? colorConstants.buttonColor
+              : colorConstants.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [getDeepBoxShadow()],
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 10.sp),
+        child: addText(
+          'Importer',
+          getNormalTextFontSIze(),
+          controller.selectedType.value == 'importer'
+              ? colorConstants.white
+              : colorConstants.black,
+          FontWeight.w600,
+        ),
+      ),
+    ),
+  ],
+)),
+SizedBox(height: 4.h),
                 addEditText(controller.businessNameController, 'Business Name'),
+                
+
                 SizedBox(height: 1.5.h,),
             addNumberRegisterEditText(
               controller.contactNoController, 'Mobile Number',inputFormatter: [FilteringTextInputFormatter.digitsOnly],

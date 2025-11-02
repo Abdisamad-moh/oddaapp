@@ -24,8 +24,8 @@ class AuthRepository{
     return _apiProvider.sendOTP(type, name, mobileNo,licenseNo,countryCode.toString());
   }
 
-  Future<OtpData> verifyOtp(String otp, String name, String mobileNo,String licenseNo,String countryCode) async {
-    return _apiProvider.verifyOtp(otp, name, mobileNo,licenseNo, countryCode);
+  Future<OtpData> verifyOtp(String otp, String name, String mobileNo,String licenseNo,String countryCode, String type) async {
+    return _apiProvider.verifyOtp(otp, name, mobileNo,licenseNo, countryCode, type);
   }
 
 }

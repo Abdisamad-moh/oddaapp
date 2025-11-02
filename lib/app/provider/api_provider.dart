@@ -73,7 +73,7 @@ class ApiProvider extends GetxService {
   Future<LoginData> sendOTP(String type, String name, String mobileNo, String licenseNo,String countryCode) async {
     Get.log("signupCountryCode:$countryCode");
     var formData = dio.FormData.fromMap({
-      // 'type': type,
+      'type': type,
       'mobile_no': mobileNo,
       'name': name,
       'licence_no': licenseNo,
@@ -132,14 +132,15 @@ class ApiProvider extends GetxService {
     }
   }
 
-  Future<OtpData> verifyOtp(String otp, String name, String mobileNo, String licenseNo,String countryCode ) async {
+  Future<OtpData> verifyOtp(String otp, String name, String mobileNo, String licenseNo,String countryCode, String type) async {
     var formData = dio.FormData.fromMap({
       'mobile_no': mobileNo,
       'name': name,
       'otp': otp,
       'licence_no': licenseNo,
       'device_token': Get.find<AuthService>().deviceToken,
-      "country_code":countryCode.toString()
+      "country_code":countryCode.toString(),
+      "type": type
     });
     var response =
         await _dio.post(getBaseURL("login_with_otp"), data: formData);
